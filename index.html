@@ -13,19 +13,53 @@
         body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; color: var(--dark); }
         header { background: var(--dark); color: white; padding: 20px 15px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .visitor-badge { background: rgba(255,255,255,0.1); padding: 2px 10px; border-radius: 10px; font-size: 12px; margin-top: 5px; display: inline-block; }
+        
+        /* شريط المحافظات القابل للسحب باليد */
+        .city-tabs { 
+            display: flex; 
+            overflow-x: auto; 
+            padding: 12px 10px; 
+            gap: 10px; 
+            background: white; 
+            border-bottom: 1px solid #ddd;
+            scrollbar-width: none; /* لإخفاء السكرول في فايرفوكس */
+            -webkit-overflow-scrolling: touch; /* سحب سلس في آيفون */
+        }
+        .city-tabs::-webkit-scrollbar { display: none; } /* إخفاء السكرول في كروم */
+        
+        .city-tab { 
+            background: #f0f2f5; 
+            padding: 8px 18px; 
+            border-radius: 25px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            transition: 0.3s; 
+            border: 1px solid #dee2e6;
+            color: #555;
+        }
+        .city-tab.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 3px 8px rgba(52,152,219,0.3); }
+
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #cfd8dc; z-index: 1000; }
         .nav-item { border: none; background: none; font-weight: bold; color: #90a4ae; cursor: pointer; font-size: 14px; }
         .nav-item.active { color: var(--primary); transform: scale(1.1); }
-        .page { display: none; padding: 15px; max-width: 600px; margin: auto; animation: fadeIn 0.5s; }
+        
+        .page { display: none; padding: 15px; max-width: 600px; margin: auto; animation: fadeIn 0.4s; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
         input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cfd8dc; border-radius: 10px; background: #f9f9f9; font-family: 'Cairo'; font-size: 15px; box-sizing: border-box; }
         .btn-main { background: var(--primary); color: white; border: none; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        
         .job-card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 18px; border-left: 6px solid var(--primary); position: relative; box-shadow: 0 6px 12px rgba(0,0,0,0.04); text-align: right; }
-        .admin-tools { background: #fff3e0; padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px dashed var(--accent); }
-        footer { text-align: center; padding: 20px; font-size: 12px; color: #7f8c8d; }
         .whatsapp-link { display: flex; align-items: center; justify-content: center; background: var(--whatsapp); color: white; text-decoration: none; padding: 12px; border-radius: 12px; font-weight: bold; margin-top: 10px; }
+        
+        .ad-slot { margin: 15px 0; background: #f8f9fa; border: 1px dashed #ccc; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .ad-label { font-size: 10px; color: #aaa; position: absolute; top: 2px; right: 5px; }
+
+        footer { text-align: center; padding: 20px; font-size: 12px; color: #7f8c8d; }
     </style>
 </head>
 <body>
@@ -35,6 +69,34 @@
     <div class="visitor-badge">👁️ الزوار: <span id="vCount">0</span></div><br>
     <small>إدارة: حمزة غالي | 07740401611</small>
 </header>
+
+<div class="ad-slot">
+    <span class="ad-label">إعلان</span>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3978081560356599" data-ad-slot="8843251234" data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<div class="city-tabs" id="cityTabs">
+    <div class="city-tab active" onclick="setCityFilter('الكل', this)">الكل</div>
+    <div class="city-tab" onclick="setCityFilter('بغداد', this)">بغداد</div>
+    <div class="city-tab" onclick="setCityFilter('البصرة', this)">البصرة</div>
+    <div class="city-tab" onclick="setCityFilter('نينوى', this)">نينوى</div>
+    <div class="city-tab" onclick="setCityFilter('أربيل', this)">أربيل</div>
+    <div class="city-tab" onclick="setCityFilter('النجف', this)">النجف</div>
+    <div class="city-tab" onclick="setCityFilter('كربلاء', this)">كربلاء</div>
+    <div class="city-tab" onclick="setCityFilter('كركوك', this)">كركوك</div>
+    <div class="city-tab" onclick="setCityFilter('ذي قار', this)">ذي قار</div>
+    <div class="city-tab" onclick="setCityFilter('بابل', this)">بابل</div>
+    <div class="city-tab" onclick="setCityFilter('الأنبار', this)">الأنبار</div>
+    <div class="city-tab" onclick="setCityFilter('ديالى', this)">ديالى</div>
+    <div class="city-tab" onclick="setCityFilter('المثنى', this)">المثنى</div>
+    <div class="city-tab" onclick="setCityFilter('القادسية', this)">القادسية</div>
+    <div class="city-tab" onclick="setCityFilter('ميسان', this)">ميسان</div>
+    <div class="city-tab" onclick="setCityFilter('واسط', this)">واسط</div>
+    <div class="city-tab" onclick="setCityFilter('صلاح الدين', this)">صلاح الدين</div>
+    <div class="city-tab" onclick="setCityFilter('دهوك', this)">دهوك</div>
+    <div class="city-tab" onclick="setCityFilter('السليمانية', this)">السليمانية</div>
+</div>
 
 <div id="workerPage" class="page active">
     <div id="jobsList"></div>
@@ -49,19 +111,31 @@
             <option value="البصرة">البصرة</option>
             <option value="نينوى">نينوى</option>
             <option value="أربيل">أربيل</option>
-            <option value="كربلاء">كربلاء</option>
             <option value="النجف">النجف</option>
+            <option value="كربلاء">كربلاء</option>
+            <option value="كركوك">كركوك</option>
+            <option value="ذي قار">ذي قار</option>
+            <option value="بابل">بابل</option>
+            <option value="الأنبار">الأنبار</option>
+            <option value="ديالى">ديالى</option>
+            <option value="المثنى">المثنى</option>
+            <option value="القادسية">القادسية</option>
+            <option value="ميسان">ميسان</option>
+            <option value="واسط">واسط</option>
+            <option value="صلاح الدين">صلاح الدين</option>
+            <option value="دهوك">دهوك</option>
+            <option value="السليمانية">السليمانية</option>
         </select>
         <input type="tel" id="whatsappNum" placeholder="رقم الواتساب">
         <input type="text" id="salary" placeholder="الراتب">
         <textarea id="details" rows="3" placeholder="تفاصيل العمل..."></textarea>
-        <input type="password" id="delCode" placeholder="كود سري خاص بك لحذف الإعلان">
+        <input type="password" id="delCode" placeholder="كود سري لحذف الإعلان">
         <button class="btn-main" onclick="submitToReview()">إرسال للمراجعة</button>
     </div>
 </div>
 
 <footer>
-    جميع الحقوق محفوظة © <br> منصة أمان بيتك - المطور حمزة غالي
+    جميع الحقوق محفوظة © منصة أمان بيتك <br> المطور حمزة غالي - 2026
 </footer>
 
 <div class="nav-bar">
@@ -88,39 +162,47 @@
     const jobsRef = ref(db, 'jobs');
     const visitorsRef = ref(db, 'visitorsCount');
     const ADMIN_PASS = "199200";
+    
     let isAdminMode = false;
+    let currentCity = 'الكل';
 
     runTransaction(visitorsRef, (v) => (v || 0) + 1);
     onValue(visitorsRef, (s) => document.getElementById('vCount').innerText = s.val() || 0);
 
-    // لوحة التحكم - اضغط اللوجو 5 مرات
     document.getElementById('logo').onclick = () => {
         window.logoClicks = (window.logoClicks || 0) + 1;
         if(window.logoClicks === 5) {
-            const p = prompt("أدخل كود الإدارة:");
+            const p = prompt("كود الإدارة:");
             if(p === ADMIN_PASS) {
                 isAdminMode = !isAdminMode;
-                alert(isAdminMode ? "وضع الإدارة: فعال" : "وضع الإدارة: مغلق");
+                alert(isAdminMode ? "وضع الإدارة مفعل" : "وضع الإدارة مغلق");
                 renderJobs();
             }
             window.logoClicks = 0;
         }
     };
 
+    window.setCityFilter = function(city, el) {
+        currentCity = city;
+        document.querySelectorAll('.city-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        renderJobs();
+    };
+
     window.submitToReview = function() {
         const shop = document.getElementById('shopName').value;
         const whatsapp = document.getElementById('whatsappNum').value;
-        if(!shop || !whatsapp) return alert("يرجى إكمال البيانات");
+        if(!shop || !whatsapp) return alert("أكمل البيانات");
 
         push(jobsRef, {
             shop, city: document.getElementById('citySelect').value,
             whatsapp, salary: document.getElementById('salary').value,
             details: document.getElementById('details').value,
             delCode: document.getElementById('delCode').value,
-            status: 'pending', // النشر الجديد يحتاج موافقة
+            status: 'pending',
             time: Date.now()
         }).then(() => {
-            alert("تم الإرسال! سيظهر الإعلان بعد مراجعة حمزة غالي.");
+            alert("تم الإرسال للمراجعة بنجاح");
             showPage('workerPage', document.querySelectorAll('.nav-item')[0]);
         });
     };
@@ -135,48 +217,34 @@
     window.renderJobs = function() {
         const list = document.getElementById('jobsList');
         list.innerHTML = '';
-        
-        // تعديل مهم: المنشورات القديمة التي ليس لها status نعتبرها approved تلقائياً
-        const filtered = isAdminMode ? window.allJobs : window.allJobs.filter(j => j.status === 'approved' || !j.status);
+        let filtered = isAdminMode ? window.allJobs : window.allJobs.filter(j => j.status === 'approved' || !j.status);
+        if (currentCity !== 'الكل') filtered = filtered.filter(j => j.city === currentCity);
 
-        if(filtered.length === 0) {
-            list.innerHTML = '<p style="text-align:center; padding:50px; color:#999;">لا توجد منشورات موافق عليها حالياً</p>';
-        }
+        if(filtered.length === 0) list.innerHTML = `<p style="text-align:center; padding:50px;">لا توجد طلبات في ${currentCity}</p>`;
 
-        filtered.reverse().forEach((job) => {
+        filtered.reverse().forEach((job, index) => {
+            if(index > 0 && index % 3 === 0) {
+                list.innerHTML += `<div class="ad-slot"><ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-fb+5w+4e-db+86" data-ad-client="ca-pub-3978081560356599" data-ad-slot="1234567890"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});<\/script></div>`;
+            }
             list.innerHTML += `
                 <div class="job-card" style="${job.status === 'pending' ? 'border-left-color:red;' : ''}">
-                    ${job.status === 'pending' ? '<b style="color:red;">[ينتظر موافقتك]</b><br>' : ''}
-                    <strong style="font-size:19px; color:var(--dark);">${job.shop}</strong><br>
+                    ${job.status === 'pending' ? '<b style="color:red;">[ينتظر الموافقة]</b><br>' : ''}
+                    <strong style="font-size:19px;">${job.shop}</strong><br>
                     <small>📍 ${job.city}</small> | <small>💰 ${job.salary}</small>
-                    <p style="margin:10px 0; font-size:15px;">${job.details}</p>
+                    <p>${job.details}</p>
                     <a href="https://wa.me/964${job.whatsapp.substring(1)}" class="whatsapp-link">تواصل واتساب 💬</a>
-                    
                     ${isAdminMode ? `
-                        <div class="admin-tools">
-                            ${job.status === 'pending' ? `<button onclick="approveJob('${job.id}')" style="background:green; color:white; padding:5px; border-radius:5px; border:none; cursor:pointer;">✅ موافقة للنشر</button>` : ''}
-                            <button onclick="deleteJob('${job.id}')" style="background:red; color:white; padding:5px; border-radius:5px; border:none; cursor:pointer;">🗑️ حذف نهائي</button>
+                        <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
+                            ${job.status === 'pending' ? `<button onclick="approveJob('${job.id}')" style="background:green; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">✅ موافقة</button>` : ''}
+                            <button onclick="deleteJob('${job.id}')" style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">🗑️ حذف</button>
                         </div>
-                    ` : `
-                        <span style="font-size:10px; color:#ccc; cursor:pointer;" onclick="requestDelete('${job.id}','${job.delCode}')">حذف إعلاني</span>
-                    `}
+                    ` : ''}
                 </div>`;
         });
     };
 
-    window.approveJob = (id) => {
-        update(ref(db, 'jobs/' + id), { status: 'approved' });
-    };
-
-    window.deleteJob = (id) => {
-        if(confirm("حذف الإعلان نهائياً؟")) remove(ref(db, 'jobs/' + id));
-    };
-
-    window.requestDelete = (id, correct) => {
-        const p = prompt("أدخل كود الحذف الخاص بك:");
-        if(p === correct || p === ADMIN_PASS) remove(ref(db, 'jobs/' + id));
-        else alert("كود خطأ");
-    };
+    window.approveJob = (id) => update(ref(db, 'jobs/' + id), { status: 'approved' });
+    window.deleteJob = (id) => { if(confirm("حذف؟")) remove(ref(db, 'jobs/' + id)); };
 </script>
 
 <script>
@@ -185,6 +253,7 @@
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
         btn.classList.add('active');
+        document.getElementById('cityTabs').style.display = (pageId === 'workerPage') ? 'flex' : 'none';
         window.scrollTo(0,0);
     }
 </script>
