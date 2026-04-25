@@ -4,119 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تطبيق مسطر | حمزة غالي</title>
+    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3978081560356599" crossorigin="anonymous"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --primary: #3498db; --accent: #e67e22; --dark: #2c3e50; 
-            --bg: #eceff1; --card-bg: #ffffff; --whatsapp: #25D366;
-        }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--dark); }
-        header { 
-            background: var(--dark); color: white; padding: 20px 15px; text-align: center; 
-            border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
-        }
-        .nav-bar { 
-            position: fixed; bottom: 0; width: 100%; background: white; 
-            display: flex; justify-content: space-around; padding: 12px 0; 
-            border-top: 1px solid #cfd8dc; z-index: 1000;
-        }
-        .nav-item { border: none; background: none; font-weight: bold; color: #90a4ae; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        :root { --primary: #3498db; --accent: #e67e22; --dark: #2c3e50; --bg: #eceff1; --card-bg: #ffffff; --whatsapp: #25D366; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; color: var(--dark); }
+        header { background: var(--dark); color: white; padding: 20px 15px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .visitor-badge { background: rgba(255,255,255,0.1); padding: 2px 10px; border-radius: 10px; font-size: 12px; margin-top: 5px; display: inline-block; }
+        .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #cfd8dc; z-index: 1000; }
+        .nav-item { border: none; background: none; font-weight: bold; color: #90a4ae; cursor: pointer; font-size: 14px; }
         .nav-item.active { color: var(--primary); transform: scale(1.1); }
         .page { display: none; padding: 15px; max-width: 600px; margin: auto; animation: fadeIn 0.5s; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cfd8dc; border-radius: 10px; background: #f9f9f9; font-family: 'Cairo'; font-size: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cfd8dc; border-radius: 10px; background: #f9f9f9; font-family: 'Cairo'; font-size: 15px; box-sizing: border-box; }
         .btn-main { background: var(--primary); color: white; border: none; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        
-        /* شريط المحافظات القابل للتمرير */
-        .city-filter-container { overflow-x: auto; white-space: nowrap; padding: 10px 0; scrollbar-width: none; -ms-overflow-style: none; }
-        .city-filter-container::-webkit-scrollbar { display: none; }
-        
-        .city-chip { background: white; border: 1px solid #cfd8dc; padding: 6px 18px; border-radius: 25px; white-space: nowrap; cursor: pointer; display: inline-block; margin: 0 5px; font-size: 14px; transition: 0.2s; }
-        .city-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-        
-        .job-card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 18px; border-left: 6px solid var(--primary); box-shadow: 0 6px 12px rgba(0,0,0,0.04); position: relative; }
-        .price-badge { background: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 8px; font-weight: bold; float: left; }
+        .job-card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 18px; border-left: 6px solid var(--primary); position: relative; box-shadow: 0 6px 12px rgba(0,0,0,0.04); text-align: right; }
+        .admin-tools { background: #fff3e0; padding: 10px; border-radius: 10px; margin-top: 10px; border: 1px dashed var(--accent); }
+        footer { text-align: center; padding: 20px; font-size: 12px; color: #7f8c8d; }
         .whatsapp-link { display: flex; align-items: center; justify-content: center; background: var(--whatsapp); color: white; text-decoration: none; padding: 12px; border-radius: 12px; font-weight: bold; margin-top: 10px; }
-        .delete-btn { color: #b0bec5; font-size: 12px; cursor: pointer; display: block; text-align: center; margin-top: 15px; text-decoration: underline; }
-        .admin-note { font-size: 12px; color: #e74c3c; margin-bottom: 10px; display: block; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <h2 style="margin:0;">Mastar Iraq | مسطر 🏗️</h2>
-    <small>إشراف المطور: حمزة غالي</small>
+    <h2 id="logo" style="margin:0; cursor:pointer;">Mastar Iraq | مسطر 🏗️</h2>
+    <div class="visitor-badge">👁️ الزوار: <span id="vCount">0</span></div><br>
+    <small>إدارة: حمزة غالي | 07740401611</small>
 </header>
 
 <div id="workerPage" class="page active">
-    <h3>فرص العمل المتاحة</h3>
-    <div class="city-filter-container" id="cityFilter">
-        <div class="city-chip active" onclick="filterByCity('الكل', this)">الكل</div>
-        <div class="city-chip" onclick="filterByCity('بغداد', this)">بغداد</div>
-        <div class="city-chip" onclick="filterByCity('البصرة', this)">البصرة</div>
-        <div class="city-chip" onclick="filterByCity('نينوى', this)">نينوى</div>
-        <div class="city-chip" onclick="filterByCity('أربيل', this)">أربيل</div>
-        <div class="city-chip" onclick="filterByCity('النجف', this)">النجف</div>
-        <div class="city-chip" onclick="filterByCity('كربلاء', this)">كربلاء</div>
-        <div class="city-chip" onclick="filterByCity('ذي قار', this)">ذي قار</div>
-        <div class="city-chip" onclick="filterByCity('كركوك', this)">كركوك</div>
-        <div class="city-chip" onclick="filterByCity('الأنبار', this)">الأنبار</div>
-        <div class="city-chip" onclick="filterByCity('بابل', this)">بابل</div>
-        <div class="city-chip" onclick="filterByCity('ديالى', this)">ديالى</div>
-        <div class="city-chip" onclick="filterByCity('المثنى', this)">المثنى</div>
-        <div class="city-chip" onclick="filterByCity('القادسية', this)">القادسية</div>
-        <div class="city-chip" onclick="filterByCity('ميسان', this)">ميسان</div>
-        <div class="city-chip" onclick="filterByCity('صلاح الدين', this)">صلاح الدين</div>
-        <div class="city-chip" onclick="filterByCity('دهوك', this)">دهوك</div>
-        <div class="city-chip" onclick="filterByCity('السليمانية', this)">السليمانية</div>
-        <div class="city-chip" onclick="filterByCity('واسط', this)">واسط</div>
-    </div>
     <div id="jobsList"></div>
 </div>
 
 <div id="ownerPage" class="page">
     <h3>نشر إعلان جديد</h3>
     <div class="card">
-        <span class="admin-note">* للحصول على رمز الدخول، تواصل مع حمزة غالي.</span>
         <input type="text" id="shopName" placeholder="اسم المحل أو المصلحة">
         <select id="citySelect">
             <option value="بغداد">بغداد</option>
             <option value="البصرة">البصرة</option>
             <option value="نينوى">نينوى</option>
             <option value="أربيل">أربيل</option>
-            <option value="النجف">النجف</option>
             <option value="كربلاء">كربلاء</option>
-            <option value="ذي قار">ذي قار</option>
-            <option value="كركوك">كركوك</option>
-            <option value="الأنبار">الأنبار</option>
-            <option value="بابل">بابل</option>
-            <option value="ديالى">ديالى</option>
-            <option value="المثنى">المثنى</option>
-            <option value="القادسية">القادسية</option>
-            <option value="ميسان">ميسان</option>
-            <option value="صلاح الدين">صلاح الدين</option>
-            <option value="دهوك">دهوك</option>
-            <option value="السليمانية">السليمانية</option>
-            <option value="واسط">واسط</option>
+            <option value="النجف">النجف</option>
         </select>
-        <input type="tel" id="whatsappNum" placeholder="رقم واتساب صاحب العمل">
-        <input type="text" id="salary" placeholder="الراتب (مثلاً: 600 ألف)">
-        <textarea id="details" rows="3" placeholder="تفاصيل العمل (المبيت، العمر، ساعات العمل...)"></textarea>
-        <input type="password" id="code" placeholder="كود سري خاص بك (لحذف الإعلان لاحقاً)">
-        <button class="btn-main" onclick="saveJob()">نشر الإعلان الآن</button>
+        <input type="tel" id="whatsappNum" placeholder="رقم الواتساب">
+        <input type="text" id="salary" placeholder="الراتب">
+        <textarea id="details" rows="3" placeholder="تفاصيل العمل..."></textarea>
+        <input type="password" id="delCode" placeholder="كود سري خاص بك لحذف الإعلان">
+        <button class="btn-main" onclick="submitToReview()">إرسال للمراجعة</button>
     </div>
 </div>
 
+<footer>
+    جميع الحقوق محفوظة © <br> منصة أمان بيتك - المطور حمزة غالي
+</footer>
+
 <div class="nav-bar">
     <button class="nav-item active" onclick="showPage('workerPage', this)">🏠 واجهة العامل</button>
-    <button class="nav-item" onclick="showPage('ownerPage', this)">📝 صاحب محل</button>
+    <button class="nav-item" onclick="showPage('ownerPage', this)">📝 انشر إعلان</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove, update, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC7uiBBwE7DMrC5rWeNkNSnbfS-lJ99kpU",
@@ -131,80 +86,96 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const jobsRef = ref(db, 'jobs');
-
-    const HAMZA_WHATSAPP = "07740401611"; // *** ضع رقمك الفعلي هنا ***
+    const visitorsRef = ref(db, 'visitorsCount');
     const ADMIN_PASS = "199200";
+    let isAdminMode = false;
 
-    window.saveJob = function() {
-        const shop = document.getElementById('shopName').value;
-        const whatsapp = document.getElementById('whatsappNum').value;
-        const code = document.getElementById('code').value;
+    runTransaction(visitorsRef, (v) => (v || 0) + 1);
+    onValue(visitorsRef, (s) => document.getElementById('vCount').innerText = s.val() || 0);
 
-        if(!shop || !whatsapp || !code) return alert("يرجى إكمال البيانات المطلوبة!");
-
-        const entry = prompt("قفل الأمان: أدخل رمز الدخول المعتمد للنشر.\nللمساعدة راسل حمزة غالي: " + HAMZA_WHATSAPP);
-        
-        if(entry === ADMIN_PASS) {
-            push(jobsRef, {
-                shop, city: document.getElementById('citySelect').value,
-                whatsapp, salary: document.getElementById('salary').value,
-                details: document.getElementById('details').value,
-                code, time: Date.now()
-            }).then(() => {
-                alert("تم التحقق بنجاح ونشر إعلانك!");
-                clearForm();
-                showPage('workerPage', document.querySelectorAll('.nav-item')[0]);
-            });
-        } else if(entry !== null) { alert("الرمز غير صحيح، يرجى مراجعة المطور."); }
+    // لوحة التحكم - اضغط اللوجو 5 مرات
+    document.getElementById('logo').onclick = () => {
+        window.logoClicks = (window.logoClicks || 0) + 1;
+        if(window.logoClicks === 5) {
+            const p = prompt("أدخل كود الإدارة:");
+            if(p === ADMIN_PASS) {
+                isAdminMode = !isAdminMode;
+                alert(isAdminMode ? "وضع الإدارة: فعال" : "وضع الإدارة: مغلق");
+                renderJobs();
+            }
+            window.logoClicks = 0;
+        }
     };
 
-    onValue(jobsRef, (snapshot) => {
-        const data = snapshot.val();
-        window.allJobs = [];
-        for (let id in data) { window.allJobs.push({ id, ...data[id] }); }
-        renderJobs(window.currentFilter || 'الكل');
-    });
+    window.submitToReview = function() {
+        const shop = document.getElementById('shopName').value;
+        const whatsapp = document.getElementById('whatsappNum').value;
+        if(!shop || !whatsapp) return alert("يرجى إكمال البيانات");
 
-    window.renderJobs = function(filter = 'الكل') {
-        window.currentFilter = filter;
-        const list = document.getElementById('jobsList');
-        list.innerHTML = '';
-        const displayData = filter === 'الكل' ? window.allJobs : window.allJobs.filter(j => j.city === filter);
-        
-        if(!displayData || displayData.length === 0) {
-            list.innerHTML = '<p style="text-align:center; padding:40px; color:#90a4ae;">لا توجد طلبات عمل حالياً في ' + (filter === 'الكل' ? 'العراق' : filter) + '</p>';
-            return;
-        }
-
-        displayData.reverse().forEach(job => {
-            list.innerHTML += `
-                <div class="job-card">
-                    <span class="price-badge">${job.salary}</span>
-                    <strong style="font-size:18px;">${job.shop}</strong><br>
-                    <small style="color:var(--accent);">📍 ${job.city}</small>
-                    <p style="font-size:14px; line-height:1.6; margin:10px 0;">${job.details.replace(/\n/g, '<br>')}</p>
-                    <a href="https://wa.me/964${job.whatsapp.substring(1)}" class="whatsapp-link">تواصل عبر واتساب 💬</a>
-                    <span class="delete-btn" onclick="deleteJob('${job.id}', '${job.code}', '${job.shop}')">إدارة هذا الإعلان (حذف)</span>
-                </div>
-            `;
+        push(jobsRef, {
+            shop, city: document.getElementById('citySelect').value,
+            whatsapp, salary: document.getElementById('salary').value,
+            details: document.getElementById('details').value,
+            delCode: document.getElementById('delCode').value,
+            status: 'pending', // النشر الجديد يحتاج موافقة
+            time: Date.now()
+        }).then(() => {
+            alert("تم الإرسال! سيظهر الإعلان بعد مراجعة حمزة غالي.");
+            showPage('workerPage', document.querySelectorAll('.nav-item')[0]);
         });
     };
 
-    window.deleteJob = function(id, correctCode, shopName) {
-        const choice = confirm("هل أنت صاحب إعلان '" + shopName + "'؟\n\n- موافق: لإدخال كود الحذف.\n- إلغاء: للتواصل مع حمزة إذا نسيت الكود.");
+    onValue(jobsRef, (snapshot) => {
+        window.allJobs = [];
+        const data = snapshot.val();
+        for (let id in data) { window.allJobs.push({ id, ...data[id] }); }
+        renderJobs();
+    });
+
+    window.renderJobs = function() {
+        const list = document.getElementById('jobsList');
+        list.innerHTML = '';
         
-        if (choice) {
-            const entry = prompt("أدخل كود الحماية الخاص بإعلانك:");
-            if (entry === correctCode) {
-                remove(ref(db, 'jobs/' + id)).then(() => alert("تم حذف الإعلان بنجاح."));
-            } else if (entry !== null) { alert("الكود غير صحيح!"); }
-        } else {
-            const contact = confirm("هل تريد طلب الحذف يدوياً من المطور حمزة غالي؟");
-            if (contact) {
-                const msg = "مرحبا حمزة، أرغب بحذف إعلان (" + shopName + ") في تطبيق مسطر ونسيت الكود.";
-                window.location.href = "https://wa.me/964" + HAMZA_WHATSAPP.substring(1) + "?text=" + encodeURIComponent(msg);
-            }
+        // تعديل مهم: المنشورات القديمة التي ليس لها status نعتبرها approved تلقائياً
+        const filtered = isAdminMode ? window.allJobs : window.allJobs.filter(j => j.status === 'approved' || !j.status);
+
+        if(filtered.length === 0) {
+            list.innerHTML = '<p style="text-align:center; padding:50px; color:#999;">لا توجد منشورات موافق عليها حالياً</p>';
         }
+
+        filtered.reverse().forEach((job) => {
+            list.innerHTML += `
+                <div class="job-card" style="${job.status === 'pending' ? 'border-left-color:red;' : ''}">
+                    ${job.status === 'pending' ? '<b style="color:red;">[ينتظر موافقتك]</b><br>' : ''}
+                    <strong style="font-size:19px; color:var(--dark);">${job.shop}</strong><br>
+                    <small>📍 ${job.city}</small> | <small>💰 ${job.salary}</small>
+                    <p style="margin:10px 0; font-size:15px;">${job.details}</p>
+                    <a href="https://wa.me/964${job.whatsapp.substring(1)}" class="whatsapp-link">تواصل واتساب 💬</a>
+                    
+                    ${isAdminMode ? `
+                        <div class="admin-tools">
+                            ${job.status === 'pending' ? `<button onclick="approveJob('${job.id}')" style="background:green; color:white; padding:5px; border-radius:5px; border:none; cursor:pointer;">✅ موافقة للنشر</button>` : ''}
+                            <button onclick="deleteJob('${job.id}')" style="background:red; color:white; padding:5px; border-radius:5px; border:none; cursor:pointer;">🗑️ حذف نهائي</button>
+                        </div>
+                    ` : `
+                        <span style="font-size:10px; color:#ccc; cursor:pointer;" onclick="requestDelete('${job.id}','${job.delCode}')">حذف إعلاني</span>
+                    `}
+                </div>`;
+        });
+    };
+
+    window.approveJob = (id) => {
+        update(ref(db, 'jobs/' + id), { status: 'approved' });
+    };
+
+    window.deleteJob = (id) => {
+        if(confirm("حذف الإعلان نهائياً؟")) remove(ref(db, 'jobs/' + id));
+    };
+
+    window.requestDelete = (id, correct) => {
+        const p = prompt("أدخل كود الحذف الخاص بك:");
+        if(p === correct || p === ADMIN_PASS) remove(ref(db, 'jobs/' + id));
+        else alert("كود خطأ");
     };
 </script>
 
@@ -215,14 +186,6 @@
         document.getElementById(pageId).classList.add('active');
         btn.classList.add('active');
         window.scrollTo(0,0);
-    }
-    function filterByCity(city, btn) {
-        document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        renderJobs(city);
-    }
-    function clearForm() {
-        document.querySelectorAll('input, textarea').forEach(i => i.value='');
     }
 </script>
 
