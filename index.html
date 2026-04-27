@@ -62,6 +62,8 @@
         .btn-approve { background: #27ae60; color: white; border: none; padding: 8px; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; }
         .btn-delete { background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; }
 
+        .admin-section-title { background: #eee; padding: 5px 15px; border-radius: 8px; margin: 20px 0 10px 0; font-size: 14px; color: #666; }
+
         footer { text-align: center; padding: 20px; font-size: 12px; color: #7f8c8d; }
     </style>
 </head>
@@ -138,8 +140,13 @@
 </div>
 
 <div id="adminPage" class="page">
-    <h3 style="color:red;">طلبات في الانتظار ⏳</h3>
+    <h3 style="color:red;">لوحة الإدارة ⚙️</h3>
+    
+    <div class="admin-section-title">طلبات في الانتظار (تحتاج موافقة)</div>
     <div id="pendingList"></div>
+
+    <div class="admin-section-title">الإعلانات المنشورة (إدارة الحذف)</div>
+    <div id="adminApprovedList"></div>
 </div>
 
 <footer>
@@ -215,7 +222,7 @@
         const data = snapshot.val();
         for (let id in data) { window.allJobs.push({ id, ...data[id] }); }
         renderJobs();
-        renderAdminPending();
+        renderAdminLists();
     });
 
     window.renderJobs = function() {
@@ -237,28 +244,45 @@
         });
     };
 
-    window.renderAdminPending = function() {
-        const list = document.getElementById('pendingList');
-        list.innerHTML = '';
+    window.renderAdminLists = function() {
+        // قائمة الطلبات بانتظار الموافقة
+        const pendingList = document.getElementById('pendingList');
+        pendingList.innerHTML = '';
         let pending = window.allJobs.filter(j => j.status === 'pending');
-
-        if(pending.length === 0) list.innerHTML = `<p style="text-align:center; padding:50px;">لا توجد طلبات جديدة بانتظارك.</p>`;
-
+        
+        if(pending.length === 0) pendingList.innerHTML = `<p style="font-size:12px; color:#999; text-align:center;">لا توجد طلبات انتظار حالياً.</p>`;
+        
         pending.reverse().forEach((job) => {
-            list.innerHTML += `
-                <div class="job-card" style="border-left-color: #f1c40f;">
-                    <strong>${job.shop}</strong> | <small>${job.city}</small><br>
-                    <p>${job.details}</p>
+            pendingList.innerHTML += `
+                <div class="job-card" style="border-left-color: #f1c40f; padding: 12px;">
+                    <strong>${job.shop}</strong> | <small>${job.city}</small>
                     <div class="admin-controls">
-                        <button class="btn-approve" onclick="approveJob('${job.id}')">✅ موافقة ونشر</button>
-                        <button class="btn-delete" onclick="deleteJob('${job.id}')">🗑️ رفض وحذف</button>
+                        <button class="btn-approve" onclick="approveJob('${job.id}')">✅ قبول ونشر</button>
+                        <button class="btn-delete" onclick="deleteJob('${job.id}')">🗑️ حذف</button>
+                    </div>
+                </div>`;
+        });
+
+        // قائمة الطلبات المنشورة (للحذف)
+        const approvedList = document.getElementById('adminApprovedList');
+        approvedList.innerHTML = '';
+        let approved = window.allJobs.filter(j => j.status === 'approved');
+        
+        if(approved.length === 0) approvedList.innerHTML = `<p style="font-size:12px; color:#999; text-align:center;">لا توجد إعلانات منشورة.</p>`;
+
+        approved.reverse().forEach((job) => {
+            approvedList.innerHTML += `
+                <div class="job-card" style="border-left-color: #27ae60; padding: 12px;">
+                    <strong>${job.shop}</strong> | <small>${job.city}</small>
+                    <div class="admin-controls">
+                        <button class="btn-delete" style="width:100%;" onclick="deleteJob('${job.id}')">🗑️ حذف الإعلان من الموقع</button>
                     </div>
                 </div>`;
         });
     };
 
     window.approveJob = (id) => update(ref(db, 'jobs/' + id), { status: 'approved' });
-    window.deleteJob = (id) => { if(confirm("حذف الإعلان نهائياً؟")) remove(ref(db, 'jobs/' + id)); };
+    window.deleteJob = (id) => { if(confirm("هل أنت متأكد من حذف هذا الطلب نهائياً؟")) remove(ref(db, 'jobs/' + id)); };
 </script>
 
 <script>
@@ -273,5 +297,5 @@
 </script>
 
 </body>
-    </html>
-
+        </html>
+    
