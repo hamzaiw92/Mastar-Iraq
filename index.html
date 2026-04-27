@@ -14,7 +14,6 @@
         header { background: var(--dark); color: white; padding: 20px 15px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .visitor-badge { background: rgba(255,255,255,0.1); padding: 2px 10px; border-radius: 10px; font-size: 12px; margin-top: 5px; display: inline-block; }
         
-        /* شريط المحافظات القابل للسحب باليد */
         .city-tabs { 
             display: flex; 
             overflow-x: auto; 
@@ -22,10 +21,10 @@
             gap: 10px; 
             background: white; 
             border-bottom: 1px solid #ddd;
-            scrollbar-width: none; /* لإخفاء السكرول في فايرفوكس */
-            -webkit-overflow-scrolling: touch; /* سحب سلس في آيفون */
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
-        .city-tabs::-webkit-scrollbar { display: none; } /* إخفاء السكرول في كروم */
+        .city-tabs::-webkit-scrollbar { display: none; }
         
         .city-tab { 
             background: #f0f2f5; 
@@ -42,7 +41,7 @@
         .city-tab.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 3px 8px rgba(52,152,219,0.3); }
 
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #cfd8dc; z-index: 1000; }
-        .nav-item { border: none; background: none; font-weight: bold; color: #90a4ae; cursor: pointer; font-size: 14px; }
+        .nav-item { border: none; background: none; font-weight: bold; color: #90a4ae; cursor: pointer; font-size: 12px; }
         .nav-item.active { color: var(--primary); transform: scale(1.1); }
         
         .page { display: none; padding: 15px; max-width: 600px; margin: auto; animation: fadeIn 0.4s; }
@@ -59,13 +58,17 @@
         .ad-slot { margin: 15px 0; background: #f8f9fa; border: 1px dashed #ccc; text-align: center; min-height: 100px; display: flex; align-items: center; justify-content: center; position: relative; }
         .ad-label { font-size: 10px; color: #aaa; position: absolute; top: 2px; right: 5px; }
 
+        .admin-controls { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+        .btn-approve { background: #27ae60; color: white; border: none; padding: 8px; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; }
+        .btn-delete { background: #e74c3c; color: white; border: none; padding: 8px; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; }
+
         footer { text-align: center; padding: 20px; font-size: 12px; color: #7f8c8d; }
     </style>
 </head>
 <body>
 
 <header>
-    <h2 id="logo" style="margin:0; cursor:pointer;">Mastar Iraq | مسطر 🏗️</h2>
+    <h2 id="logo" style="margin:0;">Mastar Iraq | مسطر 🏗️</h2>
     <div class="visitor-badge">👁️ الزوار: <span id="vCount">0</span></div><br>
     <small>إدارة: حمزة غالي | 07740401611</small>
 </header>
@@ -134,6 +137,11 @@
     </div>
 </div>
 
+<div id="adminPage" class="page">
+    <h3 style="color:red;">طلبات في الانتظار ⏳</h3>
+    <div id="pendingList"></div>
+</div>
+
 <footer>
     جميع الحقوق محفوظة © منصة أمان بيتك <br> المطور حمزة غالي - 2026
 </footer>
@@ -141,6 +149,7 @@
 <div class="nav-bar">
     <button class="nav-item active" onclick="showPage('workerPage', this)">🏠 واجهة العامل</button>
     <button class="nav-item" onclick="showPage('ownerPage', this)">📝 انشر إعلان</button>
+    <button class="nav-item" onclick="enterAdmin(this)">⚙️ الإدارة</button>
 </div>
 
 <script type="module">
@@ -161,32 +170,26 @@
     const db = getDatabase(app);
     const jobsRef = ref(db, 'jobs');
     const visitorsRef = ref(db, 'visitorsCount');
-    const ADMIN_PASS = "199200";
     
-    let isAdminMode = false;
     let currentCity = 'الكل';
 
     runTransaction(visitorsRef, (v) => (v || 0) + 1);
     onValue(visitorsRef, (s) => document.getElementById('vCount').innerText = s.val() || 0);
-
-    document.getElementById('logo').onclick = () => {
-        window.logoClicks = (window.logoClicks || 0) + 1;
-        if(window.logoClicks === 5) {
-            const p = prompt("كود الإدارة:");
-            if(p === ADMIN_PASS) {
-                isAdminMode = !isAdminMode;
-                alert(isAdminMode ? "وضع الإدارة مفعل" : "وضع الإدارة مغلق");
-                renderJobs();
-            }
-            window.logoClicks = 0;
-        }
-    };
 
     window.setCityFilter = function(city, el) {
         currentCity = city;
         document.querySelectorAll('.city-tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         renderJobs();
+    };
+
+    window.enterAdmin = function(btn) {
+        const p = prompt("أدخل كود الإدارة السري:");
+        if(p === "9292") {
+            showPage('adminPage', btn);
+        } else {
+            alert("الكود خطأ!");
+        }
     };
 
     window.submitToReview = function() {
@@ -212,39 +215,50 @@
         const data = snapshot.val();
         for (let id in data) { window.allJobs.push({ id, ...data[id] }); }
         renderJobs();
+        renderAdminPending();
     });
 
     window.renderJobs = function() {
         const list = document.getElementById('jobsList');
         list.innerHTML = '';
-        let filtered = isAdminMode ? window.allJobs : window.allJobs.filter(j => j.status === 'approved' || !j.status);
+        let filtered = window.allJobs.filter(j => j.status === 'approved');
         if (currentCity !== 'الكل') filtered = filtered.filter(j => j.city === currentCity);
 
-        if(filtered.length === 0) list.innerHTML = `<p style="text-align:center; padding:50px;">لا توجد طلبات في ${currentCity}</p>`;
+        if(filtered.length === 0) list.innerHTML = `<p style="text-align:center; padding:50px;">لا توجد طلبات مقبولة حالياً في ${currentCity}</p>`;
 
-        filtered.reverse().forEach((job, index) => {
-            if(index > 0 && index % 3 === 0) {
-                list.innerHTML += `<div class="ad-slot"><ins class="adsbygoogle" style="display:block" data-ad-format="fluid" data-ad-layout-key="-fb+5w+4e-db+86" data-ad-client="ca-pub-3978081560356599" data-ad-slot="1234567890"></ins><script>(adsbygoogle = window.adsbygoogle || []).push({});<\/script></div>`;
-            }
+        filtered.reverse().forEach((job) => {
             list.innerHTML += `
-                <div class="job-card" style="${job.status === 'pending' ? 'border-left-color:red;' : ''}">
-                    ${job.status === 'pending' ? '<b style="color:red;">[ينتظر الموافقة]</b><br>' : ''}
+                <div class="job-card">
                     <strong style="font-size:19px;">${job.shop}</strong><br>
                     <small>📍 ${job.city}</small> | <small>💰 ${job.salary}</small>
                     <p>${job.details}</p>
                     <a href="https://wa.me/964${job.whatsapp.substring(1)}" class="whatsapp-link">تواصل واتساب 💬</a>
-                    ${isAdminMode ? `
-                        <div style="margin-top:10px; border-top:1px solid #eee; padding-top:10px;">
-                            ${job.status === 'pending' ? `<button onclick="approveJob('${job.id}')" style="background:green; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">✅ موافقة</button>` : ''}
-                            <button onclick="deleteJob('${job.id}')" style="background:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">🗑️ حذف</button>
-                        </div>
-                    ` : ''}
+                </div>`;
+        });
+    };
+
+    window.renderAdminPending = function() {
+        const list = document.getElementById('pendingList');
+        list.innerHTML = '';
+        let pending = window.allJobs.filter(j => j.status === 'pending');
+
+        if(pending.length === 0) list.innerHTML = `<p style="text-align:center; padding:50px;">لا توجد طلبات جديدة بانتظارك.</p>`;
+
+        pending.reverse().forEach((job) => {
+            list.innerHTML += `
+                <div class="job-card" style="border-left-color: #f1c40f;">
+                    <strong>${job.shop}</strong> | <small>${job.city}</small><br>
+                    <p>${job.details}</p>
+                    <div class="admin-controls">
+                        <button class="btn-approve" onclick="approveJob('${job.id}')">✅ موافقة ونشر</button>
+                        <button class="btn-delete" onclick="deleteJob('${job.id}')">🗑️ رفض وحذف</button>
+                    </div>
                 </div>`;
         });
     };
 
     window.approveJob = (id) => update(ref(db, 'jobs/' + id), { status: 'approved' });
-    window.deleteJob = (id) => { if(confirm("حذف؟")) remove(ref(db, 'jobs/' + id)); };
+    window.deleteJob = (id) => { if(confirm("حذف الإعلان نهائياً؟")) remove(ref(db, 'jobs/' + id)); };
 </script>
 
 <script>
@@ -252,11 +266,12 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        btn.classList.add('active');
+        if(btn) btn.classList.add('active');
         document.getElementById('cityTabs').style.display = (pageId === 'workerPage') ? 'flex' : 'none';
         window.scrollTo(0,0);
     }
 </script>
 
 </body>
-</html>
+    </html>
+
